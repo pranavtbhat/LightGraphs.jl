@@ -4,13 +4,13 @@
 [![Coverage Status](https://coveralls.io/repos/JuliaGraphs/LightGraphs.jl/badge.svg?branch=master)](https://coveralls.io/r/JuliaGraphs/LightGraphs.jl?branch=master)
 [![LightGraphs](http://pkg.julialang.org/badges/LightGraphs_release.svg)](http://pkg.julialang.org/?pkg=LightGraphs&ver=release)
 [![Documentation Status](https://readthedocs.org/projects/lightgraphsjl/badge/?version=latest)](https://readthedocs.org/projects/lightgraphsjl/?badge=latest)
-
+[![Join the chat at https://gitter.im/JuliaGraphs/LightGraphs.jl](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JuliaGraphs/LightGraphs.jl?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
 An optimized graphs package.
 
 Simple graphs (not multi- or hypergraphs, and no self loops) are represented in a memory- and time-efficient
-manner with incidence lists and edge sets. Both directed and undirected graphs are supported via separate types, and conversion is available from directed to undirected.
+manner with adjacency lists and edge sets. Both directed and undirected graphs are supported via separate types, and conversion is available from directed to undirected.
 
 The project goal is to mirror the functionality of robust network and graph
 analysis libraries such as [NetworkX](http://networkx.github.io) while being simpler
@@ -95,7 +95,7 @@ write(g,"mygraph.jgz")
     - intersect
     - difference
     - symmetric difference
-    - compose
+    - blkdiag
     - induced subgraphs
 
 
@@ -107,7 +107,7 @@ write(g,"mygraph.jgz")
 
 
 - small graph generators
-    - see [smallgraphs.jl](https://github.com/sbromberger/LightGraphs.jl/blob/master/src/smallgraphs.jl) for list
+    - see [smallgraphs.jl](https://github.com/JuliaGraphs/LightGraphs.jl/blob/master/src/smallgraphs.jl) for list
 
 
 - random graph generators
@@ -126,7 +126,9 @@ write(g,"mygraph.jgz")
     - Laplacian matrix
 
 
-- persistence (proprietary compressed format)
+- persistence
+    - proprietary compressed format
+    - [GraphML](http://en.wikipedia.org/wiki/GraphML) format
 
 ###Documentation
 Full documentation available at [ReadTheDocs](http://lightgraphsjl.readthedocs.org).

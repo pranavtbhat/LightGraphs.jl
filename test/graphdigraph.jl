@@ -1,7 +1,7 @@
 @test sprint(show, h1) == "{5, 0} undirected graph"
 @test sprint(show, h3) == "empty undirected graph"
 
-@test Graph(g4) == g3
+@test Graph(DiGraph(g3)) == g3
 
 @test degree(g3, 1) == 1
 # @test all_neighbors(g3, 3) == [2, 4]
@@ -21,8 +21,11 @@ add_edge!(h, 1, 4)
 add_edge!(h, 2, 5)
 add_edge!(h, 3, 5)
 
+
 @test_throws ErrorException add_edge!(g, 1, 2)
 @test_throws ErrorException add_edge!(h, 1, 2)
+@test_throws ErrorException add_edge!(g, 1, 1)
+@test_throws ErrorException add_edge!(h, 1, 1)
 
 @test sprint(show, h4) == "{7, 0} directed graph"
 @test sprint(show, h5) == "empty directed graph"
@@ -43,6 +46,8 @@ add_edge!(h, 3, 5)
 badadjmx = [ 0 1 0; 1 0 1]
 @test_throws ErrorException Graph(badadjmx)
 @test_throws ErrorException DiGraph(badadjmx)
+@test_throws ErrorException Graph([1 0; 1 1])
+
 
 @test_throws BoundsError add_edge!(g, 100, 100)
 @test_throws BoundsError add_edge!(h, 100, 100)

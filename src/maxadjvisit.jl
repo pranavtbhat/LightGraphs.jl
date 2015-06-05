@@ -1,26 +1,5 @@
-# Parts of this code were taken / derived from Graphs.jl:
-# > Graphs.jl is licensed under the MIT License:
-#
-# > Copyright (c) 2012: John Myles White and other contributors.
-# >
-# > Permission is hereby granted, free of charge, to any person obtaining
-# > a copy of this software and associated documentation files (the
-# > "Software"), to deal in the Software without restriction, including
-# > without limitation the rights to use, copy, modify, merge, publish,
-# > distribute, sublicense, and/or sell copies of the Software, and to
-# > permit persons to whom the Software is furnished to do so, subject to
-# > the following conditions:
-# >
-# > The above copyright notice and this permission notice shall be
-# > included in all copies or substantial portions of the Software.
-# >
-# > THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# > EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# > MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# > NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-# > LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# > OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-# > WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+# Parts of this code were taken / derived from Graphs.jl. See LICENSE for
+# licensing details.
 
 # Maximum adjacency visit / traversal
 
@@ -45,12 +24,11 @@ function maximum_adjacency_visit_impl!(
   while !isempty(pq)
     u = Collections.dequeue!(pq)
     discover_vertex!(visitor, u)
-    for e in out_edges(graph, u)
-      examine_edge!(visitor, e, 0)
-      v = dst(e)
+    for v in fadj(graph, u)
+      examine_edge!(visitor, Edge(u,v), 0)
 
       if haskey(pq,v)
-          ed = visitor.edge_dists[src(e), dst(e)]
+          ed = visitor.edge_dists[u, v]
           if ed == zero(Float64)
               ed = 1.0
           end

@@ -1,3 +1,6 @@
+# Parts of this code were taken / derived from Graphs.jl. See LICENSE for
+# licensing details.
+
 # A* shortest-path algorithm
 module AStar
 
@@ -7,6 +10,7 @@ module AStar
 
 using LightGraphs
 using Base.Collections
+using Compat
 
 export a_star
 
@@ -18,7 +22,8 @@ function a_star_impl!(
     heuristic::Function,    # heuristic fn (under)estimating distance to target
     t::Int)  # the end vertex
 
-    use_dists = issparse(edge_dists)? nnz(edge_dists > 0) : !isempty(edge_dists)
+    # has_distances in distance.jl
+    use_dists = LightGraphs.has_distances(edge_dists)
 
     while !isempty(frontier)
         (cost_so_far, path, u) = dequeue!(frontier)
@@ -26,12 +31,11 @@ function a_star_impl!(
             return path
         end
 
-        for edge in out_edges(graph, u)
+        for v in LightGraphs.fadj(graph, u)
 
-            v = edge.dst
             if colormap[v] < 2
                 if use_dists
-                    edist = edge_dists[src(edge), dst(edge)]
+                    edist = edge_dists[u, v]
                     if edist == 0.0
                         edist = 1.0
                     end
@@ -39,7 +43,7 @@ function a_star_impl!(
                     edist = 1.0
                 end
                 colormap[v] = 1
-                new_path = cat(1, path, edge)
+                new_path = cat(1, path, Edge(u,v))
                 path_cost = cost_so_far + edist
                 enqueue!(frontier,
                         (path_cost, new_path, v),
@@ -60,7 +64,9 @@ function a_star(
     heuristic::Function = n -> 0
     )
             # heuristic (under)estimating distance to target
-    frontier = VERSION < v"0.4-" ? PriorityQueue{(Float64,Array{Edge,1},Int),Float64}() : PriorityQueue((Float64,Array{Edge,1},Int),Float64)
+    frontier = VERSION < v"0.4-" ?
+        PriorityQueue{@compat(Tuple{Float64,Array{Edge,1},Int}),Float64}() :
+        PriorityQueue(@compat(Tuple{Float64,Array{Edge,1},Int}),Float64)
     frontier[(zero(Float64), Edge[], s)] = zero(Float64)
     colormap = zeros(Int, nv(graph))
     colormap[s] = 1

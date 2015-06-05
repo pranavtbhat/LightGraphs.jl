@@ -31,7 +31,7 @@ function reverse(g::DiGraph)
     gne = ne(g)
     h = DiGraph(gnv)
     for e in edges(g)
-        add_edge!(h, rev(e))
+        add_edge!(h, reverse(e))
     end
     return h
 end
@@ -40,14 +40,14 @@ function reverse!(g::DiGraph)
     gne = ne(g)
     reve = Set{Edge}()
     for e in edges(g)
-        push!(reve, rev(e))
+        push!(reve, reverse(e))
     end
     g.edges = reve
-    g.finclist, g.binclist = g.binclist, g.finclist
+    g.fadjlist, g.badjlist = g.badjlist, g.fadjlist
     return g
 end
 
-function union{T<:AbstractGraph}(g::T, h::T)
+function blkdiag{T<:AbstractGraph}(g::T, h::T)
     gnv = nv(g)
     r = T(gnv + nv(h))
     for e in edges(g)
@@ -104,7 +104,7 @@ function symmetric_difference{T<:AbstractGraph}(g::T, h::T)
 end
 
 # merge G and H by union of all vertices and edges.
-function compose{T<:AbstractGraph}(g::T, h::T)
+function union{T<:AbstractGraph}(g::T, h::T)
     gnv = nv(g)
     hnv = nv(h)
 

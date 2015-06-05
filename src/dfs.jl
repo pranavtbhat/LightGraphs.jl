@@ -1,26 +1,5 @@
-# Parts of this code were taken / derived from Graphs.jl:
-# > Graphs.jl is licensed under the MIT License:
-#
-# > Copyright (c) 2012: John Myles White and other contributors.
-# >
-# > Permission is hereby granted, free of charge, to any person obtaining
-# > a copy of this software and associated documentation files (the
-# > "Software"), to deal in the Software without restriction, including
-# > without limitation the rights to use, copy, modify, merge, publish,
-# > distribute, sublicense, and/or sell copies of the Software, and to
-# > permit persons to whom the Software is furnished to do so, subject to
-# > the following conditions:
-# >
-# > The above copyright notice and this permission notice shall be
-# > included in all copies or substantial portions of the Software.
-# >
-# > THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# > EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# > MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# > NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-# > LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# > OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-# > WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+# Parts of this code were taken / derived from Graphs.jl. See LICENSE for
+# licensing details.
 
 # Depth-first visit / traversal
 
@@ -43,17 +22,17 @@ function depth_first_visit_impl!(
 
 
     while !isempty(stack)
-        u, uegs, tstate = pop!(stack)
+        u, udsts, tstate = pop!(stack)
         found_new_vertex = false
 
-        while !done(uegs, tstate) && !found_new_vertex
-            v_edge, tstate = next(uegs, tstate)
-            v = dst(v_edge)
+        while !done(udsts, tstate) && !found_new_vertex
+            v, tstate = next(udsts, tstate)
             v_color = vertexcolormap[v]
+            v_edge = Edge(u,v)
             if haskey(edgecolormap, v_edge)
                 e_color = edgecolormap[v_edge]
             else
-                e_color = edgecolormap[rev(v_edge)]
+                e_color = edgecolormap[reverse(v_edge)]
             end
             examine_neighbor!(visitor, u, v, v_color, e_color)
 
@@ -67,11 +46,11 @@ function depth_first_visit_impl!(
                 if !discover_vertex!(visitor, v)
                     return
                 end
-                push!(stack, (u, uegs, tstate))
+                push!(stack, (u, udsts, tstate))
 
                 open_vertex!(visitor, v)
-                vegs = out_edges(graph, v)
-                push!(stack, (v, vegs, start(vegs)))
+                vdsts = fadj(graph, v)
+                push!(stack, (v, vdsts, start(vdsts)))
             end
         end
 
@@ -103,9 +82,9 @@ function traverse_graph(
         return
     end
 
-    segs = out_edges(graph, s)
-    sstate = start(segs)
-    stack = [(s, segs, sstate)]
+    sdsts = fadj(graph, s)
+    sstate = start(sdsts)
+    stack = [(s, sdsts, sstate)]
 
     depth_first_visit_impl!(graph, stack, vertexcolormap, edgecolormap, visitor)
 end

@@ -1,26 +1,6 @@
-# Parts of this code were taken / derived from Graphs.jl:
-# > Graphs.jl is licensed under the MIT License:
-#
-# > Copyright (c) 2012: John Myles White and other contributors.
-# >
-# > Permission is hereby granted, free of charge, to any person obtaining
-# > a copy of this software and associated documentation files (the
-# > "Software"), to deal in the Software without restriction, including
-# > without limitation the rights to use, copy, modify, merge, publish,
-# > distribute, sublicense, and/or sell copies of the Software, and to
-# > permit persons to whom the Software is furnished to do so, subject to
-# > the following conditions:
-# >
-# > The above copyright notice and this permission notice shall be
-# > included in all copies or substantial portions of the Software.
-# >
-# > THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# > EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# > MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# > NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-# > LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# > OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-# > WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+# Parts of this code were taken / derived from Graphs.jl. See LICENSE for
+# licensing details.
+
 # The Bellman Ford algorithm for single-source shortest path
 
 ###################################################################
@@ -53,7 +33,8 @@ function bellman_ford_shortest_paths!(
     sources::AbstractVector{Int},
     state::BellmanFordState)
 
-    use_dists = issparse(edge_dists)? nnz(edge_dists > 0) : !isempty(edge_dists)
+    # has_distances in distance.jl
+    use_dists = has_distances(edge_dists)
 
     active = Set{Int}()
     for v in sources
@@ -66,10 +47,9 @@ function bellman_ford_shortest_paths!(
         no_changes = true
         new_active = Set{Int}()
         for u in active
-            for e in out_edges(graph, u)
-                v = dst(e)
+            for v in fadj(graph, u)
                 if use_dists
-                    edist = edge_dists[src(e), dst(e)]
+                    edist = edge_dists[u, v]
                     if edist == 0.0
                         edist = 1.0
                     end

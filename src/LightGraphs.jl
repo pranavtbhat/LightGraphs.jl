@@ -3,23 +3,27 @@ module LightGraphs
     using GZip
     using DataStructures
     using Distributions
+    using Base.Collections
+    if VERSION < v"0.4.0-dev" # until < 0.4 deprecated
+        using Docile
+    end
 
-
-    import Base:write, ==, issubset, show, print, complement, union, intersect, reverse, reverse!
+    import Base:write, ==, isless, issubset, show, print, complement, union, intersect, reverse, reverse!, blkdiag
 
     # core
     export AbstractGraph, Edge, Graph, DiGraph, vertices, edges, src, dst,
-    in_edges, out_edges, has_vertex, has_edge, is_directed, rev,
+    in_edges, out_edges, has_vertex, has_edge, is_directed,
     nv, ne, add_edge!, rem_edge!, add_vertex!, add_vertices!,
     indegree, outdegree, degree, degree_histogram, density, Δ, δ,
-    neighbors, in_neighbors, out_neighbors, common_neighbors,
+    Δout, Δin, δout, δin, neighbors, in_neighbors, out_neighbors,
+    common_neighbors,
 
     # distance
     eccentricity, diameter, periphery, radius, center,
 
     # operators
     complement, reverse, reverse!, union, intersect,
-    difference, symmetric_difference, compose,
+    difference, symmetric_difference,
     inducedsubgraph,
 
     # graph visit
@@ -38,7 +42,7 @@ module LightGraphs
     MaximumAdjacency, AbstractMASVisitor, mincut, maximum_adjacency_visit,
 
     # dijkstra
-    dijkstra_shortest_paths, dijkstra_predecessor_and_distance,
+    dijkstra_shortest_paths,
 
     # bellman-ford
     bellman_ford_shortest_paths, has_negative_edge_cycle, enumerate_paths,
@@ -64,12 +68,13 @@ module LightGraphs
 
     # linalg
     adjacency_matrix, laplacian_matrix, adjacency_spectrum, laplacian_spectrum,
+    pagerank,
 
     # astar
     a_star,
 
     # persistence
-    readgraph,
+    readgraph, read_graphml,
 
     # randgraphs
     erdos_renyi, watts_strogatz
