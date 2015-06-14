@@ -22,6 +22,31 @@ end
 
 Graph() = Graph(0)
 
+function Graph{T<:Real}(adjmx::SparseMatrixCSC{T})
+    dima, dimb = size(adjmx)
+    if dima != dimb
+        error("Adjacency / distance matrices must be square")
+    elseif !issym(adjmx)
+        error("Adjacency / distance matrices must be symmetric")
+    else
+        a = triu(adjmx)
+        g = Graph(dima)
+        maxc = length(a.colptr)
+        for c = 1:(maxc-1)
+            for rind = a.colptr[c]:a.colptr[c+1]-1
+                isnz = (a.nzval[rind] != zero(T))
+                if isnz
+                    r = a.rowval[rind]
+                    add_edge!(g,r,c)
+                end
+            end
+        end
+        return g
+    end
+end
+
+
+
 function Graph{T<:Real}(adjmx::AbstractMatrix{T})
     dima, dimb = size(adjmx)
     if dima != dimb
@@ -31,7 +56,7 @@ function Graph{T<:Real}(adjmx::AbstractMatrix{T})
     else
         g = Graph(dima)
         for i=1:dima, j=i:dima
-            if adjmx[i,j] > 0 && !isinf(adjmx[i,j])
+            if adjmx[i,j] != zero(T)
                 add_edge!(g,i,j)
             end
         end
