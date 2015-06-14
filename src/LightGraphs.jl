@@ -77,7 +77,10 @@ module LightGraphs
     readgraph, read_graphml,
 
     # randgraphs
-    erdos_renyi, watts_strogatz
+    erdos_renyi, watts_strogatz,
+
+    # benchmarks
+    read_benchmarks, write_benchmarks
 
     include("core.jl")
         include("digraph.jl")
@@ -99,4 +102,5 @@ module LightGraphs
             include("centrality/betweenness.jl")
             include("centrality/closeness.jl")
             include("centrality/degree.jl")
+            include("benchmarks.jl")
 end # module
