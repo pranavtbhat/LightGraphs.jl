@@ -25,7 +25,7 @@ end
   b1.timeelapsed == b2.timeelapsed &&
   b1.bytesalloc == b2.bytesalloc &&
   b1.timegc == b2.timegc
-  
+
 Benchmark(
     a::AbstractString, b::AbstractString,
     c::AbstractString, d::AbstractString,
@@ -124,32 +124,50 @@ benchmarks = Vector{BMTest}()
 function bm_astar_init(a...)
     g = Graph(10,2)
     z = a_star(g,1,4)
+    return 0
 end
 
 function bm_astar(a...)
     g = readgraph(Pkg.dir("LightGraphs","test","testdata", "pgp2.jgz"))
     z = a_star(g,3,5845)
+    return 0
 end
 
 
 function bm_dijkstra_shortest_paths_init(a...)
     g = Graph(10,2)
     z = dijkstra_shortest_paths(g,2)
+    return 0
 end
 
 function bm_dijkstra_shortest_paths(a...)
     g = readgraph(Pkg.dir("LightGraphs","test","testdata", "pgp2.jgz"))
     z = dijkstra_shortest_paths(g,5845)
+    return 0
 end
 
 function bm_betweenness_centrality_init(a...)
     g = Graph(10,2)
     z = betweenness_centrality(g)
+    return 0
 end
 
 function bm_betweenness_centrality(a...)
     g = readgraph(Pkg.dir("LightGraphs","test","testdata", "pgp2.jgz"))
     z = betweenness_centrality(g)
+    return 0
+end
+
+function bm_pagerank_init(a...)
+    g = Graph(10,2)
+    z = pagerank(g)
+    return 0
+end
+
+function bm_pagerank(a...)
+    g = readgraph(Pkg.dir("LightGraphs","test","testdata", "pgp2.jgz"))
+    z = pagerank(g)
+    return 0
 end
 
 push!(benchmarks, BMTest("A*", bm_astar_init, bm_astar, ()))
@@ -165,4 +183,9 @@ push!(benchmarks, BMTest("betweenness_centrality",
     ())
 )
 
+push!(benchmarks, BMTest("pagerank",
+    bm_pagerank_init,
+    bm_pagerank,
+    ())
+)
 export benchmarks
