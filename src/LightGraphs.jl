@@ -80,7 +80,7 @@ module LightGraphs
     erdos_renyi, watts_strogatz,
 
     # benchmarks
-    read_benchmarks, write_benchmarks
+    read_benchmarks, write_benchmarks, run_benchmarks
 
     include("core.jl")
         include("digraph.jl")

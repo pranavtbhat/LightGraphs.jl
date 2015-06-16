@@ -16,6 +16,7 @@ type Benchmark
     timeelapsed::Float64
     bytesalloc::Int64
     timegc::Float64
+    comment::AbstractString
 end
 
 ==(b1::Benchmark, b2::Benchmark) =
@@ -29,11 +30,12 @@ end
 Benchmark(
     a::AbstractString, b::AbstractString,
     c::AbstractString, d::AbstractString,
-    e::AbstractString, f::AbstractString
+    e::AbstractString, f::AbstractString,
+    g::AbstractString
 ) = Benchmark(
     DateTime(a), parse(Int, b),
     c, parse(Float64, d),
-    parse(Int64, e), parse(Float64, f)
+    parse(Int64, e), parse(Float64, f), g
 )
 
 
@@ -43,6 +45,7 @@ function read_benchmarks(
     bms = Vector{Benchmark}()
     f = open(fn,"r")
     for l in eachline(f)
+        l = chomp(l)
         v = split(l,",")
         push!(bms, Benchmark(v...))
     end
@@ -54,7 +57,7 @@ function write_benchmarks(
     fn::AbstractString=joinpath(Pkg.dir("LightGraphs"),"testdata","benchmarks.csv"),
     bms :: Vector{Benchmark} = []
 )
-    f = open(fn,"w")
+    f = open(fn,"a")
     for bm in bms
         bmv = []
         push!(bmv, string(bm.dt))
@@ -63,15 +66,17 @@ function write_benchmarks(
         push!(bmv, string(bm.timeelapsed))
         push!(bmv, string(bm.bytesalloc))
         push!(bmv, string(bm.timegc))
+        push!(bmv, string(bm.comment))
 
-        write(f,join(bmv, ","))
+        write(f,string(join(bmv, ","),"\n"))
     end
     close(f)
     return length(bms)
 end
 
-function run_benchmarks(indices::Vector{Int}, tests::Vector{BMTest}=benchmarks)
+function run_benchmarks(indices::Vector{Int}, tests::Vector{BMTest}, graph::AbstractGraph, comment="")
     bms = Vector{Benchmark}()
+    comt = replace(comment,",","-")
     for i in indices
 
         test = tests[i]
@@ -81,22 +86,27 @@ function run_benchmarks(indices::Vector{Int}, tests::Vector{BMTest}=benchmarks)
         push!(results, string(now()))
         push!(results, string(i))
         push!(results, test.desc)
-        z = time1(test.fn, test.args)
+        z = time1(test.fn, graph, test.args)
         push!(results, z...)
+        push!(results, comt)
 
 
         bm = Benchmark(results...)
         push!(bms, bm)
-        info("results: $results")
     end
     return bms
 end
 
-run_benchmarks(i::Int, tests::Vector{BMTest}=benchmarks) = run_benchmarks([i;], tests)
-run_benchmarks(tests::Vector{BMTest}=benchmarks) = run_benchmarks([1:length(tests);], tests)
+run_benchmarks(i::Int, graph::AbstractGraph, comment="") =
+    run_benchmarks([i;], benchmarks, graph, comment)
+run_benchmarks(indices::Vector{Int}, graph::AbstractGraph, comment="") =
+    run_benchmarks(indices, benchmarks, graph, comment)
 
-function time1(f::Function, args...)
-    z = @timed f(args...)
+run_benchmarks(graph::AbstractGraph, comment="") =
+    run_benchmarks([1:length(benchmarks);], benchmarks, graph, comment)
+
+function time1(f::Function, graph::AbstractGraph, args...)
+    z = @timed f(graph, args...)
     r = Vector{String}()
     for i = 2:4
         push!(r, string(z[i]))
@@ -127,8 +137,7 @@ function bm_astar_init(a...)
     return 0
 end
 
-function bm_astar(a...)
-    g = readgraph(Pkg.dir("LightGraphs","test","testdata", "pgp2.jgz"))
+function bm_astar(g::AbstractGraph, a...)
     z = a_star(g,3,5845)
     return 0
 end
@@ -140,8 +149,7 @@ function bm_dijkstra_shortest_paths_init(a...)
     return 0
 end
 
-function bm_dijkstra_shortest_paths(a...)
-    g = readgraph(Pkg.dir("LightGraphs","test","testdata", "pgp2.jgz"))
+function bm_dijkstra_shortest_paths(g::AbstractGraph, a...)
     z = dijkstra_shortest_paths(g,5845)
     return 0
 end
@@ -152,20 +160,18 @@ function bm_betweenness_centrality_init(a...)
     return 0
 end
 
-function bm_betweenness_centrality(a...)
-    g = readgraph(Pkg.dir("LightGraphs","test","testdata", "pgp2.jgz"))
+function bm_betweenness_centrality(g::AbstractGraph, a...)
     z = betweenness_centrality(g)
     return 0
 end
 
 function bm_pagerank_init(a...)
-    g = Graph(10,2)
+    g = DiGraph(10,2)
     z = pagerank(g)
     return 0
 end
 
-function bm_pagerank(a...)
-    g = readgraph(Pkg.dir("LightGraphs","test","testdata", "pgp2.jgz"))
+function bm_pagerank(g::AbstractGraph, a...)
     z = pagerank(g)
     return 0
 end
