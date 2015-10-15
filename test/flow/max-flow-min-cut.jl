@@ -19,7 +19,7 @@ add_edge!(flow_graph,7,3);
 add_edge!(flow_graph,7,8);
 
 # Construct flow matrix
-flow_matrix = zeros(8,8);
+flow_matrix = zeros(Int,8,8);
 
 flow_matrix[1,2] = 10;
 flow_matrix[1,3] = 5;
@@ -39,4 +39,4 @@ flow_matrix[7,8] = 10;
 
 
 # Run maximum flow Test
-@test maximum_flow(flow_graph,1,8,flow_matrix) == (0,zeros(8,8))
+@test maximum_flow(flow_graph,1,8,flow_matrix)[1] == 28
