@@ -4,19 +4,19 @@ Abstract type that allows users to pass in their preferred Algorithm
 abstract AbstractFlowAlgorithm
 
 """
-Forces the maximum_flow function to use Edmonds Karp\'s maximum flow algorithm.
+Forces the maximum_flow function to use the Edmonds–Karp algorithm.
 """
 type EdmondsKarpAlgorithm <: AbstractFlowAlgorithm
 end
 
 """
-Forces the maximum_flow function to use Dinic\'s maximum flow algorithm.
+Forces the maximum_flow function to use Dinic\'s algorithm.
 """
 type DinicAlgorithm <: AbstractFlowAlgorithm
 end
 
 """
-Forces the maximum_flow function to use the Push-Relabel maximum flow algorithm.
+Forces the maximum_flow function to use the Push-Relabel algorithm.
 """
 type PushRelabelAlgorithm <: AbstractFlowAlgorithm
 end
@@ -49,8 +49,9 @@ in DefaultDistance cannot be changed, an array of ones is created. Returns the
 residual graph and the modified capacity_matrix (when DefaultDistance is used.)
 
 Requires arguments:
-flow_graph::LightGraphs.DiGraph,        # the input graph
-capacity_matrix::AbstractArray{T,2}     # input capacity matrix
+
+- flow_graph::LightGraphs.DiGraph,        # the input graph
+- capacity_matrix::AbstractArray{T,2}     # input capacity matrix
 """
 
 function residual(
@@ -69,7 +70,7 @@ function residual(
 end
 
 """
-Method for Edmonds Karp\'s Algorithm
+Method for Edmonds–Karp algorithm
 """
 
 function maximum_flow{T<:Number}(
@@ -84,7 +85,7 @@ function maximum_flow{T<:Number}(
 end
 
 """
-Method for Push-Relabel Algorithm
+Method for Push-relabel algorithm
 """
 
 function maximum_flow{T<:Number}(
@@ -115,17 +116,17 @@ end
 
 """
 Generic maximum_flow function that can use one of the three flow algorithms:
-1. Endmond-Karp\'s algorithm: O(VE^2).
-2. Dinic\'s blocking-flow algorithm: O(V^2E)
-3. Push-Relabel algorithm: O(V^3).
+- Endmond-Karp algorithm: O(VE^2).
+- Dinic\'s blocking-flow algorithm: O(V^2E)
+- Push-Relabel algorithm: O(V^3).
 
 Requires arguments:
-flow_graph::LightGraphs.DiGraph       # the input graph
-source::Int                           # the source vertex
-target::Int                           # the target vertex
-capacity_matrix::AbstractArray{T,2}   # edge flow capacities
-;
-algorithm::AbstractFlowAlgorithm      # keyword argument for algorithm
+
+- flow_graph::LightGraphs.DiGraph       # the input graph
+- source::Int                           # the source vertex
+- target::Int                           # the target vertex
+- capacity_matrix::AbstractArray{T,2}   # edge flow capacities
+- algorithm::AbstractFlowAlgorithm      # keyword argument for algorithm
 """
 
 function maximum_flow{T<:Number}(

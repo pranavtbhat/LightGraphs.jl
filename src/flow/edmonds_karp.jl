@@ -6,10 +6,11 @@ Returns the value of the maximum flow as well as the final flow matrix.
 Use a default capacity of 1 when the capacity matrix isn\'t specified.
 
 Requires arguments:
-residual_graph::LightGraphs.DiGraph        # the input graph
-source::Int                            # the source vertex
-target::Int                            # the target vertex
-capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+
+- residual_graph::LightGraphs.DiGraph    # the input graph
+- source::Int                            # the source vertex
+- target::Int                            # the target vertex
+- capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 """
 
 function edmonds_karp_impl{T<:Number}(
@@ -60,9 +61,10 @@ Calculates the amount by which flow can be augmented in the given path.
 Augments the flow and returns the augment value.
 
 Requires arguments:
-path::Vector{Int}                      # input path
-flow_matrix::AbstractArray{T,2}        # the current flow matrix
-capacity_matrix::AbstractArray{T,2}    # edge flow capacities
+
+- path::Vector{Int}                      # input path
+- flow_matrix::AbstractArray{T,2}        # the current flow matrix
+- capacity_matrix::AbstractArray{T,2}    # edge flow capacities
 """
 
 function augment_path!{T<:Number}(
